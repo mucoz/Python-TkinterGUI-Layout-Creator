@@ -1,5 +1,31 @@
 Option Explicit
 
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'      Author             : Mustafa Can Öztürk                                                                                  '
+'      Date               : 29.10.2022                                                                                          '
+'      Purpose            : Converts VB design into Python code                                                                 '
+'      Instructions       : On userform, create a botton on top-left corner with the name "button_generate_tkinter"             '
+'                         : Background color of the window must be selected from "Palette" section, not "System"                '
+'                         : You can put the elements any place you want                                                         '
+'                         : The name of the elements must start with the names below (e.g. "label_status")                      '
+'                         : For progress bar, you can create a label and name it as "progressbar_..."                           '
+'                         : For menu items, you can use label and the name of the label must start with "menu_"                 '
+'                         : For each sub item for a menu, you need to add "sub_" keyword e.g. "menu_file_sub_new_sub_exit"      '
+'      Supported elements : LABEL ("label_")                                                                                    '
+'                         : TEXTBOX ("textbox_")                                                                                '
+'                         : BUTTON("button_")                                                                                   '
+'                         : OPTION("option_")                                                                                   '
+'                         : CHECKBOX ("checkbox_")                                                                              '
+'                         : COMBOBOX ("combobox_")                                                                              '
+'                         : FRAME ("frame_")                                                                                    '
+'                         : MULTIPAGE ("multipage_")                                                                            '
+'                         : LISTBOX ("listbox_")                                                                                '
+'                         : RICHTEXTBOX ("richtextbox_")                                                                        '
+'                         : LISTVIEW ("listview_")                                                                              '
+'                         : PROGRESSBAR ("progressbar_")                                                                        '
+'                         : MENU ("menu_file_sub_new_exit")                                                                     '
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
 Private Const LEFT_CONSTANT As Double = 1.35
 Private Const TOP_CONSTANT As Double = 1.25
 Private Const WIDTH_CONSTANT As Double = 1.35
@@ -21,7 +47,8 @@ Private element_commands() As String
 'LISTBOX        CHECK
 'RICHTEXTBOX    CHECK
 'LISTVIEW       CHECK
-'MENU
+'PROGRESSBAR    CHECK
+'MENU           CHECK
 
 
 'On userform, create a botton on top-left corner with the name "button_generate_tkinter"
@@ -33,6 +60,7 @@ Private Sub button_generate_tkinter_Click()
     Dim element_name As String
     Dim current_page As Integer
     Dim optionbox_number As Integer
+    Dim menu_number As Integer
     
     'Collect elements
     Set coll = New Collection
@@ -42,6 +70,7 @@ Private Sub button_generate_tkinter_Click()
     ReDim element_commands(0 To 0)
     
     optionbox_number = 0
+    menu_number = 0
     
     Call prepare_headers
     
@@ -108,7 +137,7 @@ Private Sub button_generate_tkinter_Click()
             
             element_layouts(UBound(element_layouts) - 3) = vbNewLine + vbTab + vbTab + "self." + element_name + "_value = tk.IntVar()" + vbNewLine + vbTab + vbTab
             element_layouts(UBound(element_layouts) - 2) = "self." + element_name + " = tk.Checkbutton(self." + parent_name + ", text='" + Me.Controls(element_name).Caption + "', variable=self." + element_name + "_value, background=self.background_color)" + vbNewLine + vbTab + vbTab
-            If Me.Controls(element_name).Value = True Then
+            If Me.Controls(element_name).value = True Then
                 element_layouts(UBound(element_layouts) - 1) = "self." + element_name + ".select()" + vbNewLine + vbTab + vbTab
             Else
                 element_layouts(UBound(element_layouts) - 1) = "self." + element_name + ".deselect()" + vbNewLine + vbTab + vbTab
@@ -233,6 +262,70 @@ Private Sub button_generate_tkinter_Click()
              
             optionbox_number = optionbox_number + 1
             
+        ElseIf Left(element_name, 11) = "progressbar" Then
+        
+            ReDim Preserve element_layouts(0 To UBound(element_layouts) + 2)
+            
+            element_layouts(UBound(element_layouts) - 1) = vbNewLine + vbTab + vbTab + "self." + element_name + " = ttk.Progressbar(self." + parent_name + ", orient='horizontal', length=" + CStr(Me.Controls(element_name).Width) + ", mode='determinate')" + vbNewLine + vbTab + vbTab
+            element_layouts(UBound(element_layouts)) = "self." + element_name + ".place(x=" + CStr(CInt(Me.Controls(element_name).Left * LEFT_CONSTANT)) + ", y=" + CStr(CInt(Me.Controls(element_name).Top * TOP_CONSTANT)) + ", width=" + CStr(CInt(Me.Controls(element_name).Width * WIDTH_CONSTANT)) + ", height=" + CStr(CInt(Me.Controls(element_name).Height * HEIGHT_CONSTANT)) + ")" + vbNewLine
+        
+        ElseIf Left(element_name, 4) = "menu" Then
+            
+            Dim j As Integer
+            Dim menu_coll As Collection
+            Dim a As Variant
+            
+            Set menu_coll = New Collection
+            
+            'Create this block of code once for menu creation
+            If menu_number = 0 Then
+            
+                ReDim Preserve element_layouts(0 To UBound(element_layouts) + 2)
+                
+                element_layouts(UBound(element_layouts) - 1) = vbNewLine + vbTab + vbTab + "self.menu_bar = Menu(self.window)" + vbNewLine + vbTab + vbTab
+                element_layouts(UBound(element_layouts)) = "self.window.config(menu=self.menu_bar)" + vbNewLine
+            
+                menu_number = menu_number + 1
+                
+            End If
+            
+            a = Split(element_name, "_")
+            
+            For j = LBound(a) To UBound(a)
+                
+                If LCase(a(j)) <> "menu" And LCase(a(j)) <> "sub" Then
+                    
+                    menu_coll.Add cUpper(a(j)), cUpper(a(j))
+                         
+                End If
+            
+            Next j
+            
+            For j = 1 To menu_coll.Count
+            
+                If j = 1 Then
+                
+                    ReDim Preserve element_layouts(0 To UBound(element_layouts) + 1)
+                    element_layouts(UBound(element_layouts)) = vbNewLine + vbTab + vbTab + "self." + LCase(menu_coll(j)) + "_menu = Menu(self.menu_bar, tearoff=0)"
+                
+                Else
+                
+                    ReDim Preserve element_layouts(0 To UBound(element_layouts) + 1)
+                    element_layouts(UBound(element_layouts)) = vbNewLine + vbTab + vbTab + "self." + LCase(menu_coll(1)) + "_menu.add_command(label='" + menu_coll(j) + "', command=self.menu_" + LCase(menu_coll(j)) + "_click)"
+                
+                    ReDim Preserve element_commands(0 To UBound(element_commands) + 2)
+            
+                    element_commands(UBound(element_commands) - 1) = vbNewLine + vbTab + "def menu_" + LCase(menu_coll(j)) + "_click(self):" + vbNewLine + vbTab + vbTab
+                    element_commands(UBound(element_commands)) = "print('menu_" + LCase(menu_coll(j)) + " has been clicked')" + vbNewLine
+                                    
+                End If
+            
+            Next j
+            
+            ReDim Preserve element_layouts(0 To UBound(element_layouts) + 1)
+            
+            element_layouts(UBound(element_layouts)) = vbNewLine + vbTab + vbTab + "self.menu_bar.add_cascade(label='" + menu_coll(1) + "', menu=self." + LCase(menu_coll(1)) + "_menu)" + vbNewLine
+            
         End If
     
     Next i
@@ -339,6 +432,12 @@ Private Function get_bgcolor_hex() As String
 
 End Function
 
+Private Function cUpper(ByVal value As String) As String
+
+    cUpper = UCase(Mid(value, 1, 1)) + Mid(value, 2, Len(value) - 1)
+        
+End Function
+
 Private Sub SetClipboard(text As String)
 
     Dim obj As New DataObject
@@ -346,4 +445,3 @@ Private Sub SetClipboard(text As String)
     obj.PutInClipboard
 
 End Sub
-
