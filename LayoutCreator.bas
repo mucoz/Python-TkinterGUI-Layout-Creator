@@ -4,7 +4,8 @@ Option Explicit
 '      Author             : Mustafa Can Öztürk                                                                                  '
 '      Date               : 29.10.2022                                                                                          '
 '      Purpose            : Converts VB design into Python code                                                                 '
-'      Instructions       : On userform, create a botton on top-left corner with the name "button_generate_tkinter"             '
+'      Instructions       : Paste the codes inside a user form                                                                  '
+'                         : On userform, create a botton on top-left corner with the name "button_generate_tkinter"             '
 '                         : Background color of the window must be selected from "Palette" section, not "System"                '
 '                         : You can put the elements any place you want                                                         '
 '                         : The name of the elements must start with the names below (e.g. "label_status")                      '
@@ -445,3 +446,4 @@ Private Sub SetClipboard(text As String)
     obj.PutInClipboard
 
 End Sub
+
