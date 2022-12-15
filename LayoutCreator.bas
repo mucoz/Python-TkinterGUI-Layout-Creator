@@ -2,16 +2,16 @@ Option Explicit
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 '      Author             : Mustafa Can Öztürk                                                                                  '
-'      Date               : 29.10.2022                                                                                          '
 '      Purpose            : Converts VB design into Python code                                                                 '
-'      Instructions       : Paste the codes inside a user form                                                                  '
-'                         : On userform, create a botton on top-left corner with the name "button_generate_tkinter"             '
-'                         : Background color of the window must be selected from "Palette" section, not "System"                '
-'                         : You can put the elements any place you want                                                         '
-'                         : The name of the elements must start with the names below (e.g. "label_status")                      '
-'                         : For progress bar, you can create a label and name it as "progressbar_..."                           '
-'                         : For menu items, you can use label and the name of the label must start with "menu_"                 '
-'                         : For each sub item for a menu, you need to add "sub_" keyword e.g. "menu_file_sub_new_sub_exit"      '
+'      Instructions       : 1) Paste the codes inside a user form                                                               '
+'                         : 2) On userform, create a botton on top-left corner with the name "button_generate_tkinter"          '
+'                         : 3) Background color of the window must be selected from "Palette" section, not "System"             '
+'                         : 4) You can put the elements any place you want                                                      '
+'                         : 5) The name of the elements must start with the names below (e.g. "label_status")                   '
+'                         : 6) For progress bar, you can create a label and name it as "progressbar_..."                        '
+'                         : 7) For menu items, you can use label and the name of the label must start with "menu_"              '
+'                         : 8) For each sub item for a menu, you need to add "sub_" keyword e.g. "menu_file_sub_new_sub_exit"   '
+'                         : 9) To add a separator, add "sep" keyword between menu items e.g. menu_file_sub_new_sep_sub_exit"    '
 '      Supported elements : LABEL ("label_")                                                                                    '
 '                         : TEXTBOX ("textbox_")                                                                                '
 '                         : BUTTON("button_")                                                                                   '
@@ -24,7 +24,7 @@ Option Explicit
 '                         : RICHTEXTBOX ("richtextbox_")                                                                        '
 '                         : LISTVIEW ("listview_")                                                                              '
 '                         : PROGRESSBAR ("progressbar_")                                                                        '
-'                         : MENU ("menu_file_sub_new_exit")                                                                     '
+'                         : MENU ("menu_file_sub_new_sep_sub_edit_sub_view_sep_sub_exit") File-> New | Edit View | Exit         '
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Private Const LEFT_CONSTANT As Double = 1.35
@@ -296,7 +296,7 @@ Private Sub button_generate_tkinter_Click()
                 
                 If LCase(a(j)) <> "menu" And LCase(a(j)) <> "sub" Then
                     
-                    menu_coll.Add cUpper(a(j)), cUpper(a(j))
+                    menu_coll.Add cUpper(a(j)), CStr(j)
                          
                 End If
             
@@ -310,15 +310,24 @@ Private Sub button_generate_tkinter_Click()
                     element_layouts(UBound(element_layouts)) = vbNewLine + vbTab + vbTab + "self." + LCase(menu_coll(j)) + "_menu = Menu(self.menu_bar, tearoff=0)"
                 
                 Else
+                    
+                    If LCase(menu_coll(j)) = "sep" Then
+                                            
+                        ReDim Preserve element_layouts(0 To UBound(element_layouts) + 1)
+                        element_layouts(UBound(element_layouts)) = vbNewLine + vbTab + vbTab + "self." + LCase(menu_coll(1)) + "_menu.add_separator()"
+                    
+                    Else
+                    
+                        ReDim Preserve element_layouts(0 To UBound(element_layouts) + 1)
+                        element_layouts(UBound(element_layouts)) = vbNewLine + vbTab + vbTab + "self." + LCase(menu_coll(1)) + "_menu.add_command(label='" + menu_coll(j) + "', command=self.menu_" + LCase(menu_coll(j)) + "_click)"
+                    
+                        ReDim Preserve element_commands(0 To UBound(element_commands) + 2)
                 
-                    ReDim Preserve element_layouts(0 To UBound(element_layouts) + 1)
-                    element_layouts(UBound(element_layouts)) = vbNewLine + vbTab + vbTab + "self." + LCase(menu_coll(1)) + "_menu.add_command(label='" + menu_coll(j) + "', command=self.menu_" + LCase(menu_coll(j)) + "_click)"
-                
-                    ReDim Preserve element_commands(0 To UBound(element_commands) + 2)
-            
-                    element_commands(UBound(element_commands) - 1) = vbNewLine + vbTab + "def menu_" + LCase(menu_coll(j)) + "_click(self):" + vbNewLine + vbTab + vbTab
-                    element_commands(UBound(element_commands)) = "print('menu_" + LCase(menu_coll(j)) + " has been clicked')" + vbNewLine
+                        element_commands(UBound(element_commands) - 1) = vbNewLine + vbTab + "def menu_" + LCase(menu_coll(j)) + "_click(self):" + vbNewLine + vbTab + vbTab
+                        element_commands(UBound(element_commands)) = "print('menu_" + LCase(menu_coll(j)) + " has been clicked')" + vbNewLine
                                     
+                    End If
+                    
                 End If
             
             Next j
