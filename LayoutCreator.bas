@@ -10,8 +10,8 @@ Option Explicit
 '                         : 5) The name of the elements must start with the names below (e.g. "label_status")                   '
 '                         : 6) For progress bar, you can create a label and name it as "progressbar_..."                        '
 '                         : 7) For menu items, you can use label and the name of the label must start with "menu_"              '
-'                         : 8) For each sub item for a menu, you need to add "sub_" keyword e.g. "menu_file_sub_new_sub_exit"   '
-'                         : 9) To add a separator, add "sep" keyword between menu items e.g. menu_file_sub_new_sep_sub_exit"    '
+'                         : 8) For each sub item for a menu, you need to add "_"  e.g. "menu_file_new_exit"                     '
+'                         : 9) To add a separator, add "sep" keyword between menu items e.g. menu_file_new_sep_exit"            '
 '      Supported elements : LABEL ("label_")                                                                                    '
 '                         : TEXTBOX ("textbox_")                                                                                '
 '                         : BUTTON("button_")                                                                                   '
@@ -24,7 +24,7 @@ Option Explicit
 '                         : RICHTEXTBOX ("richtextbox_")                                                                        '
 '                         : LISTVIEW ("listview_")                                                                              '
 '                         : PROGRESSBAR ("progressbar_")                                                                        '
-'                         : MENU ("menu_file_sub_new_sep_sub_edit_sub_view_sep_sub_exit") File-> New | Edit View | Exit         '
+'                         : MENU ("menu_file_new_sep_edit_view_sep_exit") File-> New | Edit View | Exit                         '
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Private Const LEFT_CONSTANT As Double = 1.35
@@ -294,7 +294,7 @@ Private Sub button_generate_tkinter_Click()
             
             For j = LBound(a) To UBound(a)
                 
-                If LCase(a(j)) <> "menu" And LCase(a(j)) <> "sub" Then
+                If LCase(a(j)) <> "menu" Then
                     
                     menu_coll.Add cUpper(a(j)), CStr(j)
                          
