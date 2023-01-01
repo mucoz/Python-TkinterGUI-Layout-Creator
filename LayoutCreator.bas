@@ -10,8 +10,8 @@ Option Explicit
 '                         : 5) The name of the elements must start with the names below (e.g. "label_status")                   '
 '                         : 6) For progress bar, you can create a label and name it as "progressbar_..."                        '
 '                         : 7) For menu items, you can use label and the name of the label must start with "menu_"              '
-'                         : 8) For each sub item for a menu, you need to add "_"  e.g. "menu_file_new_exit"                     '
-'                         : 9) To add a separator, add "sep" keyword between menu items e.g. menu_file_new_sep_exit"            '
+'                         : 8) For each sub item for a menu, you need to add "sub_" keyword e.g. "menu_file_sub_new_sub_exit"   '
+'                         : 9) To add a separator, add "sep" keyword between menu items e.g. menu_file_sub_new_sep_sub_exit"    '
 '      Supported elements : LABEL ("label_")                                                                                    '
 '                         : TEXTBOX ("textbox_")                                                                                '
 '                         : BUTTON("button_")                                                                                   '
@@ -24,7 +24,7 @@ Option Explicit
 '                         : RICHTEXTBOX ("richtextbox_")                                                                        '
 '                         : LISTVIEW ("listview_")                                                                              '
 '                         : PROGRESSBAR ("progressbar_")                                                                        '
-'                         : MENU ("menu_file_new_sep_edit_view_sep_exit") File-> New | Edit View | Exit                         '
+'                         : MENU ("menu_file_sub_new_sep_sub_edit_sub_view_sep_sub_exit") File-> New | Edit View | Exit         '
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Private Const LEFT_CONSTANT As Double = 1.35
@@ -294,7 +294,7 @@ Private Sub button_generate_tkinter_Click()
             
             For j = LBound(a) To UBound(a)
                 
-                If LCase(a(j)) <> "menu" Then
+                If LCase(a(j)) <> "menu" And LCase(a(j)) <> "sub" Then
                     
                     menu_coll.Add cUpper(a(j)), CStr(j)
                          
@@ -347,7 +347,7 @@ End Sub
 Private Sub prepare_headers()
 
     ' At the beginning, create the default layout
-    ReDim headers(0 To 15)
+    ReDim headers(0 To 21)
     
     headers(0) = "import tkinter as tk" + vbNewLine
     headers(1) = "from tkinter import ttk" + vbNewLine
@@ -359,12 +359,18 @@ Private Sub prepare_headers()
     headers(7) = "def __init__(self):" + vbNewLine + vbTab + vbTab
     headers(8) = "self.window = tk.Tk()" + vbNewLine + vbTab + vbTab
     headers(9) = "self.window.title ('" + Me.Caption + "')" + vbNewLine + vbTab + vbTab
-    headers(10) = "self.window.geometry ('" + CStr(CInt(Me.Width * 1.315)) + "x" + CStr(CInt(Me.Height * 1.265)) + "')" + vbNewLine + vbTab + vbTab
+    headers(10) = "self.center_screen(" + CStr(CInt(Me.Width * 1.315)) + ", " + CStr(CInt(Me.Height * 1.265)) + ")" + vbNewLine + vbTab + vbTab
     headers(11) = "self.background_color='#" + get_bgcolor_hex + "'" + vbNewLine + vbTab + vbTab
     headers(12) = "self.window.configure(bg=self.background_color)" + vbNewLine + vbTab + vbTab
     headers(13) = "self.create_elements()" + vbNewLine + vbTab + vbTab
     headers(14) = "self.window.mainloop()" + vbNewLine + vbNewLine
-    headers(15) = vbTab + "def create_elements(self):" + vbNewLine + vbTab + vbTab
+    headers(15) = vbTab + "def center_screen(self, width, height):" + vbNewLine + vbTab + vbTab
+    headers(16) = "screen_width = self.window.winfo_screenwidth()" + vbNewLine + vbTab + vbTab
+    headers(17) = "screen_height = self.window.winfo_screenheight()" + vbNewLine + vbTab + vbTab
+    headers(18) = "x_cordinate = int((screen_width / 2) - (width / 2))" + vbNewLine + vbTab + vbTab
+    headers(19) = "y_cordinate = int((screen_height / 2) - (height / 2))" + vbNewLine + vbTab + vbTab
+    headers(20) = "self.window.geometry('{}x{}+{}+{}'.format(width, height, x_cordinate, y_cordinate))" + vbNewLine
+    headers(21) = vbTab + "def create_elements(self):" + vbNewLine + vbTab + vbTab
 
 End Sub
 
@@ -455,4 +461,3 @@ Private Sub SetClipboard(text As String)
     obj.PutInClipboard
 
 End Sub
-
