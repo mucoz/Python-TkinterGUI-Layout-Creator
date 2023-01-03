@@ -111,7 +111,7 @@ Private Sub button_generate_tkinter_Click()
             ReDim Preserve element_commands(0 To UBound(element_commands) + 2)
             
             element_commands(UBound(element_commands) - 1) = vbNewLine + vbTab + "def " + LCase(element_name) + "_text(self):" + vbNewLine + vbTab + vbTab
-            element_commands(UBound(element_commands)) = "return self." + LCase(element_name) + ".get()" + vbNewLine
+            element_commands(UBound(element_commands)) = "return self." + LCase(element_name) + "_value.get()" + vbNewLine
         
         ElseIf Left(LCase(element_name), 6) = "button" Then
         
@@ -461,3 +461,5 @@ Private Sub SetClipboard(text As String)
     obj.PutInClipboard
 
 End Sub
+
+
