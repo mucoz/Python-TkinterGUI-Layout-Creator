@@ -130,7 +130,7 @@ Private Sub button_generate_tkinter_Click()
             ReDim Preserve element_layouts(0 To UBound(element_layouts) + 2)
             
             element_layouts(UBound(element_layouts) - 1) = vbNewLine + vbTab + vbTab + "self." + element_name + " = ttk.Label(self." + parent_name + ", text='" + Me.Controls(element_name).Caption + "', background=self.background_color)" + vbNewLine + vbTab + vbTab
-            element_layouts(UBound(element_layouts)) = "self." + element_name + ".place(x=" + CStr(CInt(Me.Controls(element_name).Left)) + ", y=" + CStr(CInt(Me.Controls(element_name).Top * TOP_CONSTANT)) + ")" + vbNewLine
+            element_layouts(UBound(element_layouts)) = "self." + element_name + ".place(x=" + CStr(CInt(Me.Controls(element_name).Left * LEFT_CONSTANT)) + ", y=" + CStr(CInt(Me.Controls(element_name).Top * TOP_CONSTANT)) + ")" + vbNewLine
         
         ElseIf Left(element_name, 8) = "checkbox" Then
         
@@ -355,7 +355,7 @@ Private Sub prepare_headers()
     headers(3) = "from tkinter import Menu" + vbNewLine
     headers(4) = "from tkinter import messagebox as msg" + vbNewLine
     headers(5) = vbNewLine
-    headers(6) = "class new_window():" + vbNewLine + vbTab
+    headers(6) = "class NewWindow():" + vbNewLine + vbTab
     headers(7) = "def __init__(self):" + vbNewLine + vbTab + vbTab
     headers(8) = "self.window = tk.Tk()" + vbNewLine + vbTab + vbTab
     headers(9) = "self.window.title ('" + Me.Caption + "')" + vbNewLine + vbTab + vbTab
